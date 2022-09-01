@@ -80,8 +80,28 @@ RSpec.describe 'Items API' do
         expect(response.status).to eq(404)
     end
 
-    xit "can edit an item" do
-        merchant_id = create(:merchant).id
+    it "can update an item" do
+        id = create(:item).id
+        previous_name = Item.last.name
+        previous_description= Item.last.description
+        previous_unit_price = Item.last.unit_price
+        item_params = ({
+                name: 'Hard Cover Book',
+                description: 'Twilight Book: Eclipse',
+                unit_price: 11.50
+                })
+        headers = {"CONTENT_TYPE" => "application/json"}
+
+        patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+        item = Item.find_by(id: id)
+
+        expect(response).to be_successful
+        expect(item.name).to_not eq(previous_name)
+        expect(item.name).to eq("Hard Cover Book")
+        expect(item.description).to_not eq(previous_description)
+        expect(item.description).to eq("Twilight Book: Eclipse")
+        expect(item.unit_price).to_not eq(previous_unit_price)
+        expect(item.unit_price).to eq(11.50)
 
     end
 
@@ -91,21 +111,22 @@ RSpec.describe 'Items API' do
         expect(Item.count).to eq(1)
 
         delete "/api/v1/items/#{item.id}"
-        expect(response).to be_success
+        expect(response).to be_successful
         # expect(response.status).to eq(204)
         expect(Item.count).to eq(0)
         expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    # it "can destroy an item" do
-    #   item = create(:item)
+    it "can destroy an item" do
+      item = create(:item)
 
-    #   expect{ delete "/api/v1/items/#{item.id}" }.to change(item, :count).by(-1)
+      expect{ delete "/api/v1/items/#{item.id}" }.to change(Item, :count).by(-1)
 
-    #   expect(response).to be_success
-    #   expect{item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
-    # end
-    xit "can get merchant data from an item" do
+      expect(response).to be_successful
+      expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    end
+    
+    it "can get merchant data from an item" do
         merchant_id = create(:merchant).id
 
     end
