@@ -22,7 +22,7 @@ RSpec.describe 'Items API' do
     end
 
     it "api call can get one item by ID" do
-         id = create(:item).id
+        id = create(:item).id
 
         get "/api/v1/items/#{id}"
         
@@ -36,6 +36,60 @@ RSpec.describe 'Items API' do
         expect(item[:attributes][:name]).to be_a(String)
         expect(item[:attributes][:description]).to be_a(String)
         expect(item[:attributes][:unit_price]).to be_a(Float)
+    end
+
+    it "creates an item" do 
+        merchant_id = create(:merchant).id
+
+        item_params = ({
+                        name: 'Book',
+                        description: 'Twilight Book: New Moon',
+                        unit_price: 10.50,
+                        merchant_id: merchant_id 
+                        })
+
+        headers = {"CONTENT_TYPE" => "application/json"}
+
+        post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params) 
+        
+        expect(response).to be_successful 
+        expect(response.status).to eq(201)
+
+        created_item = Item.last
+
+        expect(created_item.name).to eq(item_params[:name])
+        expect(created_item.name).to eq('Book')
+        expect(created_item.description).to eq(item_params[:description])
+        expect(created_item.unit_price).to eq(item_params[:unit_price])
+        expect(created_item.merchant_id).to eq(item_params[:merchant_id])
+    end
+
+    it "does not creates an item when fields are missing returns 404 response status" do 
+        merchant_id = create(:merchant).id
+
+        item_params = ({
+                        name: 'Book',
+                        description: 'Twilight Book: New Moon',
+                        unit_price: 10.50
+                        })
+
+        headers = {"CONTENT_TYPE" => "application/json"}
+
+        post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params) 
+        
+        expect(response.status).to eq(404)
+    end
+
+    xit "can edit an item" do
+        merchant_id = create(:merchant).id
+
+    end
+    xit "can delete an item" do
+        merchant_id = create(:merchant).id
+    end
+    xit "can get merchant data from an item" do
+        merchant_id = create(:merchant).id
+
     end
 end
 
