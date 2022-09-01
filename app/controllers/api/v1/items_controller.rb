@@ -14,10 +14,14 @@ class Api::V1::ItemsController < ApplicationController
     def create
         item = Item.new(item_params)
         if item.save 
-            render json: Item.create(item_params), status: 201
+            render json: ItemSerializer.new(item), status: 201
         else 
             render status: 404
         end
+    end
+
+    def destroy
+        render json: Item.delete(params[:id])
     end
 
     private

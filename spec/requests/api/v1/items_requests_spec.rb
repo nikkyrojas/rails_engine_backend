@@ -84,9 +84,27 @@ RSpec.describe 'Items API' do
         merchant_id = create(:merchant).id
 
     end
-    xit "can delete an item" do
-        merchant_id = create(:merchant).id
+
+    it "can destroy an item" do
+        item = create(:item)
+
+        expect(Item.count).to eq(1)
+
+        delete "/api/v1/items/#{item.id}"
+        expect(response).to be_success
+        # expect(response.status).to eq(204)
+        expect(Item.count).to eq(0)
+        expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
     end
+
+    # it "can destroy an item" do
+    #   item = create(:item)
+
+    #   expect{ delete "/api/v1/items/#{item.id}" }.to change(item, :count).by(-1)
+
+    #   expect(response).to be_success
+    #   expect{item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    # end
     xit "can get merchant data from an item" do
         merchant_id = create(:merchant).id
 
