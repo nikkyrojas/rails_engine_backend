@@ -10,21 +10,12 @@ class Api::V1::ItemsController < ApplicationController
     def update
         item = Item.update(params[:id], item_params)
         if item.update(item_params)
-            render json: ItemSerializer.new(item)
+            render json: ItemSerializer.new(item), status: 202
         else
             render status: 404
         end
     end
 
-#       def update
-#     pet = Pet.find(params[:id])
-#     if pet.update(pet_params)
-#       redirect_to "/pets/#{pet.id}"
-#     else
-#       redirect_to "/pets/#{pet.id}/edit"
-#       flash[:alert] = "Error: #{error_message(pet.errors)}"
-#     end
-#   end
     def create
         item = Item.new(item_params)
         if item.save 
@@ -35,7 +26,7 @@ class Api::V1::ItemsController < ApplicationController
     end
 
     def destroy
-        render json: Item.delete(params[:id])
+        render json: Item.delete(params[:id]), status: 204
     end
 
     private

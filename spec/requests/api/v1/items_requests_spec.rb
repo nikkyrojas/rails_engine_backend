@@ -112,7 +112,7 @@ RSpec.describe 'Items API' do
 
         delete "/api/v1/items/#{item.id}"
         expect(response).to be_successful
-        # expect(response.status).to eq(204)
+        expect(response.status).to eq(204)
         expect(Item.count).to eq(0)
         expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
     end
@@ -127,17 +127,22 @@ RSpec.describe 'Items API' do
     end
     
     it "can get merchant data from an item" do
-        merchant_id = create(:merchant).id
+        merchant = create(:merchant) 
+        merchant2 = create(:merchant) 
+        item = create(:item, merchant_id: merchant.id)
+    
+
+        get "/api/v1/items/#{item.id}/merchant/#{merchant.id}"
+        
+        expect(response).to be_successful
+
+        item_merchant = JSON.parse(response.body, symbolize_names: true)[:data]
+
+        expect(item_merchant).to have_key(:attributes)
+        expect(item_merchant[:id]).to be_a(String)
+        expect(item_merchant[:type]).to eq("merchant")
+        expect(item_merchant[:attributes][:name]).to be_a(String)
+        expect(item_merchant[:id]).to_not eq(merchant2.id)
 
     end
 end
-
-
-
-# Items:
-# get all items
-# get one item
-# create an item
-# edit an item
-# delete an item
-# get the merchant data for a given item ID
