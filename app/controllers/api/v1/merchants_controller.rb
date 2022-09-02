@@ -8,7 +8,6 @@ class Api::V1::MerchantsController < ApplicationController
     end
 
     def find
-        binding.pry
         merchant = Merchant.where("name ILIKE ?", "%#{params[:name]}%")
  
         if merchant.empty?
