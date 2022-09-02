@@ -22,4 +22,13 @@ RSpec.describe 'Merchants Items API' do
         end
     end
 
+    it "returns an error if merchant id does not exists" do 
+        id = create(:merchant).id 
+        merchant_items = create_list(:item, 5, merchant_id: id)
+
+        get "/api/v1/merchants/12345/items"
+
+        expect(response.status).to eq(404)
+    end
+
 end
