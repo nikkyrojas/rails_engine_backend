@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       # get '/api/v1/merchants/:id/items', to: 'merchant_items#index'
+      get "/merchants/find", to: "merchants#find"
       resources :items, only: [:index, :show, :create, :edit, :update, :destroy] do
         resources :merchant, controller: 'merchants', only: [:show]
       end

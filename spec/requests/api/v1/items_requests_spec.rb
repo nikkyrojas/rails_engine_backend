@@ -21,6 +21,17 @@ RSpec.describe 'Items API' do
         end
     end
 
+    it "returns an error if item id does not exist" do
+        merchant = create(:merchant) 
+        merchant2 = create(:merchant) 
+        item = create(:item, merchant_id: merchant.id)
+    
+
+        get "/api/v1/items/12345"
+        
+        expect(response.status).to eq(404)
+    end
+
     it "api call can get one item by ID" do
         id = create(:item).id
 
@@ -143,6 +154,5 @@ RSpec.describe 'Items API' do
         expect(item_merchant[:type]).to eq("merchant")
         expect(item_merchant[:attributes][:name]).to be_a(String)
         expect(item_merchant[:id]).to_not eq(merchant2.id)
-
     end
 end
