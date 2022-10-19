@@ -35,36 +35,4 @@ RSpec.describe 'Merchants API' do
         expect(merchant).to have_key(:attributes)
         expect(merchant[:attributes][:name]).to be_a(String)
     end
-
-    it "finds merchant by partial name search/edgecase" do 
-        m1 = Merchant.create!(name: "Cardi B")
-        m2 = Merchant.create!(name: "Nicki Minaj")
-
-        get "/api/v1/merchants/find?name=cARd"
-
-        expect(response).to be_successful
-
-        matches_merchants = JSON.parse(response.body, symbolize_names: true)[:data]
-        merchant = matches_merchants.first
-
-        expect(merchant).to have_key(:id)
-        expect(merchant[:id]).to be_an(String)
-        expect(merchant).to have_key(:attributes)
-        expect(merchant[:attributes][:name]).to be_a(String)
-        expect(merchant[:attributes][:name]).to eq(m1.name)
-        expect(merchant[:attributes][:name]).to_not eq(m2.name)
-
-    end
-  
-    it "if search results show no match, returns: no merchant matches search " do 
-        m1 = Merchant.create!(name: "Cardi B")
-        m2 = Merchant.create!(name: "Nicki Minaj")
-
-        get "/api/v1/merchants/find?name=Saweetie"
-
-        merchant = JSON.parse(response.body, symbolize_names: true)[:data]
-
-        # expect(merchant).to eq("{}")
-        expect(response.body).to include("No Merchants Found")
-    end
 end

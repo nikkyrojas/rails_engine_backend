@@ -11,6 +11,24 @@ class Api::V1::ItemsController < ApplicationController
             render status: 404
         end
     end
+    def find
+        if params[:name] != nil
+            items = Item.where("name ILIKE ?", "%#{params[:name].downcase}%")
+            if items.empty? || params[:name] == "" then render json: { data: [] } else render json: ItemSerializer.new(items.first) end
+        else render json: { data: {Message: "No Item(s) Found"}}, status: 400
+        end
+    end
+    
+    def find_all
+        if params[:name] != nil 
+            items = Item.where("name ILIKE ?", "%#{params[:name].downcase}%")
+            if items.empty? || params[:name] == "" then render json: { data: [] } else render json: ItemSerializer.new(items) end
+        elsif params[:min_price] != nil
+            items = Item.where('unit_price >= ?', params[:min_price])
+            render json: ItemSerializer.new(items)
+        else render json: { data: {Message: "No Item(s) Found"}}, status: 400
+        end
+    end
 
     def update
         item = Item.update(params[:id], item_params)
@@ -36,7 +54,7 @@ class Api::V1::ItemsController < ApplicationController
 
     private
     def item_params
-        params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
+        params.require(:item).permit(:name, :description, :unit_price, :merchant_id) 
         # params.require(:item).permit(:name, :description, :unit_price, :merchant_id) if params[:merchant]
     end
 end

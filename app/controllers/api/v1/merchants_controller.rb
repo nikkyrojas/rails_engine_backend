@@ -8,12 +8,28 @@ class Api::V1::MerchantsController < ApplicationController
     end
 
     def find
-        merchant = Merchant.where("name ILIKE ?", "%#{params[:name]}%")
- 
-        if merchant.empty?
-            render json: { data: {Message: "No Merchants Found"}}
+        if params[:name] != nil
+            merchant = Merchant.where("name ILIKE ?", "%#{params[:name].downcase}%") 
+            if merchant.empty? || params[:name] == "" 
+                render json: { data: {Message: "No Merchants Found"}}, status: 400
+            else
+                render json: MerchantSerializer.new(merchant.first)
+            end
         else
-            render json: MerchantSerializer.new(merchant)
+            render json: { data: {Message: "No Merchants Found"}}, status: 400
+        end
+    end
+
+    def find_all
+        if params[:name] != nil
+            merchant = Merchant.where("name ILIKE ?", "%#{params[:name].downcase}%") 
+            if merchant.empty? || params[:name] == "" 
+                render json: { data: {Message: "No Merchants Found"}}, status: 400
+            else
+                render json: MerchantSerializer.new(merchant)
+            end
+        else
+            render json: { data: {Message: "No Merchants Found"}}, status: 400
         end
     end
 end

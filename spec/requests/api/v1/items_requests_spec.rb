@@ -89,6 +89,7 @@ RSpec.describe 'Items API' do
         post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params) 
         
         expect(response.status).to eq(404)
+
     end
 
     it "can update an item" do
@@ -103,7 +104,7 @@ RSpec.describe 'Items API' do
                 })
         headers = {"CONTENT_TYPE" => "application/json"}
 
-        patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+        patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
         item = Item.find_by(id: id)
 
         expect(response).to be_successful
@@ -143,7 +144,7 @@ RSpec.describe 'Items API' do
         item = create(:item, merchant_id: merchant.id)
     
 
-        get "/api/v1/items/#{item.id}/merchant/#{merchant.id}"
+        get "/api/v1/items/#{item.id}/merchant"
         
         expect(response).to be_successful
 
@@ -155,4 +156,5 @@ RSpec.describe 'Items API' do
         expect(item_merchant[:attributes][:name]).to be_a(String)
         expect(item_merchant[:id]).to_not eq(merchant2.id)
     end
+
 end
