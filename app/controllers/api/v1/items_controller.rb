@@ -14,7 +14,13 @@ class Api::V1::ItemsController < ApplicationController
     def find
         if params[:name] != nil
             items = Item.where("name ILIKE ?", "%#{params[:name].downcase}%")
-            if items.empty? || params[:name] == "" then render json: { data: [] } else render json: ItemSerializer.new(items.first) end
+            if items.empty? || params[:name] == "" then render json: { data: ["No Item(s) Found"] }, status: 400 else render json: ItemSerializer.new(items.first) end
+        elsif params[:min_price] != nil || params[:min_price] != "" 
+            unless params[:min_price] == ""
+                items = Item.where('unit_price >= ?', params[:min_price])
+                render json: ItemSerializer.new(items.first)
+            else render json: { data: {Message: "No Item(s) Found"}}, status: 400
+            end
         else render json: { data: {Message: "No Item(s) Found"}}, status: 400
         end
     end
